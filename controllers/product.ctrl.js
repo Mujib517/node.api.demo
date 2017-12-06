@@ -1,82 +1,86 @@
-//in memory
-var products = [
-    { id: 1, brand: "Nokia", model: "N8", price: 100, inStock: true },
-    { id: 2, brand: "Samsung", model: "S8", price: 1200, inStock: false },
-    { id: 3, brand: "Apple", model: "IPhone X", price: 1300, inStock: false }
-];
-
-
-//Status codes
-// 1xx  = Pending
-// 2xx  == Success  200, 201, 204 
-// 3xx  = Redirects
-// 4xx  = Client Errors 401, 404
-// 5xx  = Server Errors  501 500 
+var Product = require('../models/product.model');
 
 module.exports = {
     get: function (req, res) {
-        res.json(products);
+
+        function callback(err, products) {
+            if (err) {
+                res.status(501);
+                res.send("Internal Server Error");
+            }
+            else {
+                res.status(200);
+                res.json(products);
+            }
+        }
+
+        Product.find({}, { __v: 0 }, callback);
     },
 
     getById: function (req, res) {
+        var id = req.params.id;
 
-        //==
-        //===
-        var id = +req.params.id;
+        Product.findById(id, function (err, product) {
+            if (product) {
+                res.status(200);
+                res.json(product);
+            }
+            else {
+                res.status(404);
+                res.send("Not found");
+            }
 
-        var product;
-        for (var i = 0; i < products.length; i++) {
-            if (products[i].id === id)
-                product = products[i];
-        }
+        });
 
-        if (product) {
-            res.status(200);
-            res.send(product);
-        }
-
-        else {
-            res.status(404);
-            res.send("Not found");
-        }
     },
 
     save: function (req, res) {
-        var product = req.body;
-        products.push(product);
-        res.status(201); //Created
-        res.send("Created");
+        var product = new Product(req.body);
+
+        product.save(function (err) {
+            if (!err) {
+                res.status(201);
+                res.send("Created");
+            }
+            else {
+                res.status(501);
+                res.send(err);
+            }
+        });
     },
 
     delete: function (req, res) {
-        var id = +req.params.id;
+        var id = req.params.id;
 
-        for (var i = 0; i < products.length; i++) {
-            if (products[i].id === id) {
-                products.splice(i, 1);
-                break;
+        Product.findByIdAndRemove(id, function (err) {
+            if (!err) {
+                res.status(204); //No content
+                res.send("Deleted");
             }
-        }
+            else {
+                res.status(501);
+                res.send("Internal Server Error");
+            }
+        });
 
-        res.status(204); //No content
-        res.send("Deleted");
+
+
     },
 
     update: function (req, res) {
-        var id = +req.params.id;
-        var product = req.body;
+        var id = req.params.id;
 
-        for (var i = 0; i < products.length; i++) {
-            if (products[i].id === id) {
-                products[i].brand = product.brand;
-                products[i].model = product.model;
-                products[i].price = product.price;
-                products[i].inStock = product.inStock;
+        var product = new Product(req.body);
+
+        Product.findByIdAndUpdate(id, product, function (err) {
+            if (!err) {
+                res.status(200);
+                res.send("Updated");
             }
-        }
-
-        res.status(200);
-        res.send("Updated");
+            else {
+                res.status(501);
+                res.send("Internal Server Error");
+            }
+        });
     }
-
 };
