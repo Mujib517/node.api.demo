@@ -14,6 +14,7 @@ app.listen(3000, function () {
 });
 //Domain driven
 mongoose.connection.openUri("mongodb://localhost/ecommerce");
+mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
 

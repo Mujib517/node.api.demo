@@ -10,6 +10,8 @@ var productCtrl = require('./../controllers/product.ctrl');
 
 //HTTP GET http://localhost:3000/products
 router.get('/', productCtrl.get);
+router.get('/:pageIndex/:pageSize', productCtrl.get);
+
 router.get('/:id', productCtrl.getById);
 router.delete('/:id', productCtrl.delete);
 router.put('/:id', productCtrl.update);

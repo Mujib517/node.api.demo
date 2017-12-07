@@ -3,18 +3,42 @@ var Product = require('../models/product.model');
 module.exports = {
     get: function (req, res) {
 
-        function callback(err, products) {
-            if (err) {
-                res.status(501);
-                res.send("Internal Server Error");
-            }
-            else {
-                res.status(200);
-                res.json(products);
-            }
-        }
+        // var pageSize = req.params.pageSize ? +req.params.pageSize : 5;
+        // var pageIndex = req.params.pageIndex ? +req.params.pageIndex : 0;
+        // falsy: 0 false  null undefined NaN ""
+        // truthy 
+        var pageSize = +req.params.pageSize || 5;
+        var pageIndex = +req.params.pageIndex || 0;
 
-        Product.find({}, { __v: 0 }, callback);
+        Product.count()
+            .exec()
+            .then(function (cnt) {
+                //deferred execution
+                var query = Product.find();
+                query.skip(pageIndex * pageSize);
+                query.limit(pageSize);
+
+                query.exec()
+                    .then(function (products) {
+
+                        var response = {
+                            metadata: {
+                                count: cnt,
+                                pages: Math.ceil(cnt / pageSize)
+                            },
+                            data: products
+                        };
+
+                        res.status(200);
+                        res.json(response);
+                    })
+                    .catch(function (err) {
+                        res.status(500);
+                        res.send("Internal Server Error");
+                    });
+            });
+
+
     },
 
     getById: function (req, res) {
