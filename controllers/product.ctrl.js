@@ -2,43 +2,45 @@ var Product = require('../models/product.model');
 
 module.exports = {
     get: function (req, res) {
-
-        // var pageSize = req.params.pageSize ? +req.params.pageSize : 5;
-        // var pageIndex = req.params.pageIndex ? +req.params.pageIndex : 0;
-        // falsy: 0 false  null undefined NaN ""
-        // truthy 
         var pageSize = +req.params.pageSize || 5;
         var pageIndex = +req.params.pageIndex || 0;
+        var count;
+
+        //deferred execution
+        var query = Product
+            .find()
+            .sort("-lastUpdated")
+            .skip(pageIndex * pageSize)
+            .limit(pageSize);
 
         Product.count()
             .exec()
             .then(function (cnt) {
-                //deferred execution
-                var query = Product.find();
-                query.skip(pageIndex * pageSize);
-                query.limit(pageSize);
+                count = cnt;
+                return query.exec();
+            })
+            .then(function (products) {
 
-                query.exec()
-                    .then(function (products) {
+                for (var i = 0; i < products.length; i++) {
+                    if (products[i].image)
+                        products[i].image = req.protocol + "://" + req.get('host') + "/" + products[i].image;
+                }
 
-                        var response = {
-                            metadata: {
-                                count: cnt,
-                                pages: Math.ceil(cnt / pageSize)
-                            },
-                            data: products
-                        };
+                var response = {
+                    metadata: {
+                        count: count,
+                        pages: Math.ceil(count / pageSize)
+                    },
+                    data: products
+                };
 
-                        res.status(200);
-                        res.json(response);
-                    })
-                    .catch(function (err) {
-                        res.status(500);
-                        res.send("Internal Server Error");
-                    });
+                res.status(200);
+                res.json(response);
+            })
+            .catch(function (err) {
+                res.status(500);
+                res.send(err);
             });
-
-
     },
 
     getById: function (req, res) {
@@ -60,6 +62,8 @@ module.exports = {
 
     save: function (req, res) {
         var product = new Product(req.body);
+
+        console.log('product ', product);
 
         product.save(function (err) {
             if (!err) {
