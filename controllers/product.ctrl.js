@@ -63,8 +63,6 @@ module.exports = {
     save: function (req, res) {
         var product = new Product(req.body);
 
-        console.log('product ', product);
-
         product.save(function (err) {
             if (!err) {
                 res.status(201);

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var productCtrl = require('./../controllers/product.ctrl');
+var reviewCtrl = require('./../controllers/review.ctrl');
 
 var multer = require('multer');
 
@@ -33,5 +34,6 @@ router.delete('/:id', productCtrl.delete);
 router.put('/:id', productCtrl.update);
 //HTTP POST http://localhost:3000/products
 router.post('/', upload.single('img'), productCtrl.save);
+router.post('/reviews',reviewCtrl.save);  //localhost:3000/api/products/reviews
 
 module.exports = router;
