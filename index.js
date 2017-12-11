@@ -22,4 +22,18 @@ mongoose.Promise = global.Promise;
 app.use(bodyParser.json());
 
 app.use('/', defaultRouter);
+
+function isAuthenticated(req, res, next) {
+    if (req.headers["username"] === 'admin' && req.headers["password"] === 'admin') next();
+    else {
+        res.status(401);
+        res.send("Unauthorized");
+    }
+}
+
+app.use(isAuthenticated);
+
 app.use('/api/products', productRouter);
+
+//basic
+//token

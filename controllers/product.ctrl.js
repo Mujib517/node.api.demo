@@ -1,4 +1,5 @@
 var Product = require('../models/product.model');
+var Review = require('../models/review.model');
 
 module.exports = {
     get: function (req, res) {
@@ -48,8 +49,15 @@ module.exports = {
 
         Product.findById(id, function (err, product) {
             if (product) {
-                res.status(200);
-                res.json(product);
+                Review.find({ productId: id })
+                    .exec()
+                    .then(function (reviews) {
+                        var jsonProduct = product.toJSON();
+                        jsonProduct.reviews = reviews;
+                        res.status(200);
+                        res.json(jsonProduct);
+                    });
+
             }
             else {
                 res.status(404);
