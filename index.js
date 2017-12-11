@@ -1,12 +1,16 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var jwt = require('jsonwebtoken');
 
 
 var defaultCtrl = require('./controllers/default.ctrl');
 var productCtrl = require('./controllers/product.ctrl');
 var productRouter = require('./routes/product.router');
 var defaultRouter = require('./routes/default.router');
+var userRouter = require('./routes/user.router');
+
+var middlewares = require('./utilities/middlewares');
 
 var app = express();
 
@@ -22,16 +26,11 @@ mongoose.Promise = global.Promise;
 app.use(bodyParser.json());
 
 app.use('/', defaultRouter);
+app.use('/api/users', userRouter);
 
-function isAuthenticated(req, res, next) {
-    if (req.headers["username"] === 'admin' && req.headers["password"] === 'admin') next();
-    else {
-        res.status(401);
-        res.send("Unauthorized");
-    }
-}
 
-app.use(isAuthenticated);
+
+app.use(middlewares.isAuthencticated);
 
 app.use('/api/products', productRouter);
 
