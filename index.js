@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 
 
+var config = require('./config');
 var defaultCtrl = require('./controllers/default.ctrl');
 var productCtrl = require('./controllers/product.ctrl');
 var productRouter = require('./routes/product.router');
@@ -20,7 +21,7 @@ app.listen(3000, function () {
     console.log("Server is running on 3000");;
 });
 //Domain driven
-mongoose.connection.openUri("mongodb://localhost/ecommerce");
+mongoose.connection.openUri(config.conStr);
 mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
@@ -30,7 +31,7 @@ app.use('/api/users', userRouter);
 
 
 
-app.use(middlewares.isAuthencticated);
+//app.use(middlewares.isAuthencticated);
 
 app.use('/api/products', productRouter);
 

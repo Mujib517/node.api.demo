@@ -54,10 +54,19 @@ module.exports = {
                     .then(function (reviews) {
                         var jsonProduct = product.toJSON();
                         jsonProduct.reviews = reviews;
-                        res.status(200);
-                        res.json(jsonProduct);
-                    });
 
+                        Review.aggregate(
+                            [
+                                { $match: { productId: id } },
+                                { $group: { _id: '$productId', avgRating: { $avg: '$rating' } } }
+                            ]
+                        ).then(function (result) {
+                            if (result && result.length > 0)
+                                jsonProduct.avgRating = result[0].avgRating;
+                            res.status(200);
+                            res.json(jsonProduct);
+                        });
+                    });
             }
             else {
                 res.status(404);

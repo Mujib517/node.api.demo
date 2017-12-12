@@ -1,6 +1,7 @@
 var User = require('../models/user.model');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
+var config = require('../config');
 
 function UserCtrl() {
 
@@ -26,7 +27,7 @@ function UserCtrl() {
             .then(function (user) {
                 var result = bcrypt.compareSync(req.body.password, user.password);
                 if (result) {
-                    var token = jwt.sign(user.username, 'secret');
+                    var token = jwt.sign(user.username, config.privateKey);
                     res.status(200);
                     res.send({
                         username: user.username,
