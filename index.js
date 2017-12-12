@@ -2,7 +2,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
-
+var morgan = require('morgan');
+var fs = require('fs');
+var path = require('path');
 
 var config = require('./config');
 var defaultCtrl = require('./controllers/default.ctrl');
@@ -20,6 +22,11 @@ app.use(express.static('uploads/'));
 app.listen(3000, function () {
     console.log("Server is running on 3000");;
 });
+
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'requests.log'), { flags: 'a' });
+app.use(morgan('combined', { stream: accessLogStream }));
+
+
 //Domain driven
 mongoose.connection.openUri(config.conStr);
 mongoose.Promise = global.Promise;
