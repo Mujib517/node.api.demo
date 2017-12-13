@@ -5,7 +5,8 @@ var jwt = require('jsonwebtoken');
 var morgan = require('morgan');
 var fs = require('fs');
 var path = require('path');
-
+//CI and CD : Continuous integration and Continuous delivery
+// source --> Git --> bundle, minifying unit tests integration tests  --> heroku
 
 var config = require('./config');
 var defaultCtrl = require('./controllers/default.ctrl');
