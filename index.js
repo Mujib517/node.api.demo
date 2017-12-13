@@ -6,6 +6,7 @@ var morgan = require('morgan');
 var fs = require('fs');
 var path = require('path');
 
+
 var config = require('./config');
 var defaultCtrl = require('./controllers/default.ctrl');
 var productCtrl = require('./controllers/product.ctrl');
@@ -19,8 +20,9 @@ var app = express();
 
 app.use(express.static('uploads/'));
 
-app.listen(3000, function () {
-    console.log("Server is running on 3000");;
+var port = process.env.PORT | 3000;
+app.listen(port, function () {
+    console.log("Server is running on " + port);;
 });
 
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'requests.log'), { flags: 'a' });

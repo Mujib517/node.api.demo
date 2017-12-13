@@ -2,6 +2,7 @@ var User = require('../models/user.model');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var config = require('../config');
+var logger = require('../utilities/logger');
 
 function UserCtrl() {
 
@@ -15,7 +16,8 @@ function UserCtrl() {
                 res.status(201);
                 res.send("Registered");
             })
-            .catch(function () {
+            .catch(function (err) {
+                logger.error(err);
                 res.status(500);
                 res.send("Internal Server Error");
             });

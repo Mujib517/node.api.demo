@@ -1,5 +1,7 @@
 var Product = require('../models/product.model');
 var Review = require('../models/review.model');
+var logger = require('../utilities/logger');
+
 
 module.exports = {
     get: function (req, res) {
@@ -17,6 +19,7 @@ module.exports = {
         Product.count()
             .exec()
             .then(function (cnt) {
+                logger.debug("Fetched count from databae");
                 count = cnt;
                 return query.exec();
             })
@@ -40,7 +43,8 @@ module.exports = {
             })
             .catch(function (err) {
                 res.status(500);
-                res.send(err);
+                logger.error(err);
+                res.send("Internal Server Error");
             });
     },
 
