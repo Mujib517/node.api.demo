@@ -20,6 +20,7 @@ var middlewares = require('./utilities/middlewares');
 var app = express();
 
 app.use(express.static('uploads/'));
+ 
 
 var port = process.env.PORT || 3000;
 app.listen(port, function () {
