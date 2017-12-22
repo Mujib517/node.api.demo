@@ -5,6 +5,7 @@ var jwt = require('jsonwebtoken');
 var morgan = require('morgan');
 var fs = require('fs');
 var path = require('path');
+var cors = require('cors');
 //CI and CD : Continuous integration and Continuous delivery
 // source --> Git --> bundle, minifying unit tests integration tests  --> heroku
 
@@ -20,7 +21,7 @@ var middlewares = require('./utilities/middlewares');
 var app = express();
 
 app.use(express.static('uploads/'));
- 
+
 
 var port = process.env.PORT || 3000;
 app.listen(port, function () {
@@ -35,6 +36,7 @@ app.use(morgan('combined', { stream: accessLogStream }));
 mongoose.connection.openUri(config.conStr);
 mongoose.Promise = global.Promise;
 
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/', defaultRouter);
