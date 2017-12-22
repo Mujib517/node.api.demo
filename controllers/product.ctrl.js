@@ -5,7 +5,7 @@ var logger = require('../utilities/logger');
 
 module.exports = {
     get: function (req, res) {
-        var pageSize = +req.params.pageSize || 5;
+        var pageSize = +req.params.pageSize || 10;
         var pageIndex = +req.params.pageIndex || 0;
         var count;
 
