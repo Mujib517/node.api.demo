@@ -84,10 +84,10 @@ module.exports = {
     save: function (req, res) {
         var product = new Product(req.body);
 
-        product.save(function (err) {
+        product.save(function (err, product) {
             if (!err) {
                 res.status(201);
-                res.send("Created");
+                res.json(product);
             }
             else {
                 res.status(501);
