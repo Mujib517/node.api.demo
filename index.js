@@ -44,7 +44,7 @@ app.use('/api/users', userRouter);
 
 
 
-app.use(middlewares.isAuthencticated);
+//app.use(middlewares.isAuthencticated);
 
 app.use('/api/products', productRouter);
 
